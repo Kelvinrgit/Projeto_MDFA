@@ -1,0 +1,9 @@
+arquivo_logico,caminho,md5,versao,data_execucao
+raw,dados\raw\susep_bruto_v1_20260319_213814.parquet,5a0c16c246c60cf4f06b62381e6daa2a,1,2026-03-19 21:38:14
+trusted_tratado,dados\trusted\susep_tratado_v1_20260319_213814.parquet,5a0c16c246c60cf4f06b62381e6daa2a,1,2026-03-19 21:38:14
+trusted_sinistralidade_mensal,dados\trusted\susep_sinistralidade_mensal_v1_20260319_213814.parquet,5a17e1289845001c72fb1ccde17e4202,1,2026-03-19 21:38:14
+analytical_resumo_uf,dados\analytical\resumo_por_uf_v1_20260319_213814.parquet,b05b7774d3883eba5a0dbe29e264e757,1,2026-03-19 21:38:14
+analytical_outliers,dados\analytical\outliers_iqr_v1_20260319_213814.parquet,cf68ca30d8ad4c872b85a4a97502416c,1,2026-03-19 21:38:14
+analytical_resumo_outliers,dados\analytical\resumo_outliers_v1_20260319_213814.parquet,c87350a9eeb1493ce36b553ca4d9f148,1,2026-03-19 21:38:14
+analytical_sinistralidade_anual,dados\analytical\sinistralidade_anual_v1_20260319_213814.parquet,e0f3b1c34f172d499475d59379b0e343,1,2026-03-19 21:38:14
+sqlite_db,dados\db\susep_mdaf.db,def965d362535802abf627b01711dd2b,1,2026-03-19 21:38:14

@@ -1,0 +1,373 @@
+{
+    "gerado_em": "2026-03-19 21:38:14",
+    "versao": "1",
+    "camadas": [
+        {
+            "tabela": "raw_susep_bruto",
+            "n_linhas": 1944,
+            "n_colunas": 4,
+            "colunas": [
+                {
+                    "nome": "UF",
+                    "tipo": "str",
+                    "nulos": 0,
+                    "descricao": "Unidade federativa"
+                },
+                {
+                    "nome": "Competência",
+                    "tipo": "int64",
+                    "nulos": 0,
+                    "descricao": "Ano e mês no formato AAAAMM"
+                },
+                {
+                    "nome": "Prêmio Direto (R$)",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": "Valor do prêmio direto arrecadado"
+                },
+                {
+                    "nome": "Sinistro Direto (R$)",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": "Valor do sinistro direto pago"
+                }
+            ]
+        },
+        {
+            "tabela": "trusted_susep_tratado",
+            "n_linhas": 1944,
+            "n_colunas": 4,
+            "colunas": [
+                {
+                    "nome": "UF",
+                    "tipo": "str",
+                    "nulos": 0,
+                    "descricao": "Unidade federativa"
+                },
+                {
+                    "nome": "Competência",
+                    "tipo": "int64",
+                    "nulos": 0,
+                    "descricao": "Ano e mês no formato AAAAMM"
+                },
+                {
+                    "nome": "Prêmio Direto (R$)",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": "Valor do prêmio direto arrecadado"
+                },
+                {
+                    "nome": "Sinistro Direto (R$)",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": "Valor do sinistro direto pago"
+                }
+            ]
+        },
+        {
+            "tabela": "trusted_susep_sinistralidade_mensal",
+            "n_linhas": 1944,
+            "n_colunas": 8,
+            "colunas": [
+                {
+                    "nome": "UF",
+                    "tipo": "str",
+                    "nulos": 0,
+                    "descricao": "Unidade federativa"
+                },
+                {
+                    "nome": "Competência",
+                    "tipo": "int64",
+                    "nulos": 0,
+                    "descricao": "Ano e mês no formato AAAAMM"
+                },
+                {
+                    "nome": "Data",
+                    "tipo": "str",
+                    "nulos": 0,
+                    "descricao": "Data convertida a partir da competência"
+                },
+                {
+                    "nome": "Ano",
+                    "tipo": "int64",
+                    "nulos": 0,
+                    "descricao": "Ano da observação"
+                },
+                {
+                    "nome": "Mês",
+                    "tipo": "int64",
+                    "nulos": 0,
+                    "descricao": "Mês da observação"
+                },
+                {
+                    "nome": "Prêmio Direto (R$)",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": "Valor do prêmio direto arrecadado"
+                },
+                {
+                    "nome": "Sinistro Direto (R$)",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": "Valor do sinistro direto pago"
+                },
+                {
+                    "nome": "Sinistralidade",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": "Razão entre sinistro e prêmio"
+                }
+            ]
+        },
+        {
+            "tabela": "analytical_resumo_por_uf",
+            "n_linhas": 27,
+            "n_colunas": 13,
+            "colunas": [
+                {
+                    "nome": "UF",
+                    "tipo": "str",
+                    "nulos": 0,
+                    "descricao": "Unidade federativa"
+                },
+                {
+                    "nome": "Registros",
+                    "tipo": "int64",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Sinistralidade_Media",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": "Média da sinistralidade no período"
+                },
+                {
+                    "nome": "Sinistralidade_Mediana",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": "Mediana da sinistralidade no período"
+                },
+                {
+                    "nome": "Sinistralidade_Min",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": "Menor sinistralidade observada"
+                },
+                {
+                    "nome": "Sinistralidade_Max",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": "Maior sinistralidade observada"
+                },
+                {
+                    "nome": "Desvio_Padrao",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": "Desvio padrão da sinistralidade"
+                },
+                {
+                    "nome": "Q1",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": "Primeiro quartil"
+                },
+                {
+                    "nome": "Q3",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": "Terceiro quartil"
+                },
+                {
+                    "nome": "IQR",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": "Amplitude interquartil"
+                },
+                {
+                    "nome": "Limite_Inferior",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": "Limite inferior para outliers"
+                },
+                {
+                    "nome": "Limite_Superior",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": "Limite superior para outliers"
+                },
+                {
+                    "nome": "CV",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": "Coeficiente de variação"
+                }
+            ]
+        },
+        {
+            "tabela": "analytical_outliers_iqr",
+            "n_linhas": 170,
+            "n_colunas": 15,
+            "colunas": [
+                {
+                    "nome": "UF",
+                    "tipo": "str",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Competência",
+                    "tipo": "int64",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Data",
+                    "tipo": "str",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Ano",
+                    "tipo": "int64",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Mês",
+                    "tipo": "int64",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Prêmio Direto (R$)",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Sinistro Direto (R$)",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Sinistralidade",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Q1",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Q3",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "IQR",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Limite_Inferior",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Limite_Superior",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Tipo_Outlier",
+                    "tipo": "str",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Desvio_Limite",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": ""
+                }
+            ]
+        },
+        {
+            "tabela": "analytical_resumo_outliers",
+            "n_linhas": 27,
+            "n_colunas": 4,
+            "colunas": [
+                {
+                    "nome": "UF",
+                    "tipo": "str",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Outliers_Inferiores",
+                    "tipo": "int64",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Outliers_Superiores",
+                    "tipo": "int64",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Total_Outliers",
+                    "tipo": "int64",
+                    "nulos": 0,
+                    "descricao": ""
+                }
+            ]
+        },
+        {
+            "tabela": "analytical_sinistralidade_anual",
+            "n_linhas": 162,
+            "n_colunas": 5,
+            "colunas": [
+                {
+                    "nome": "UF",
+                    "tipo": "str",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Ano",
+                    "tipo": "int64",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Premio_Total",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Sinistro_Total",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": ""
+                },
+                {
+                    "nome": "Sinistralidade_Anual",
+                    "tipo": "float64",
+                    "nulos": 0,
+                    "descricao": ""
+                }
+            ]
+        }
+    ]
+}
