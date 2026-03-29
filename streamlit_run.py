@@ -1,5 +1,5 @@
 """
-Fase 5 — Dashboard Interativo de Sinistralidade (SUSEP)
+Fase 6 — Dashboard Interativo de Sinistralidade (SUSEP)
 Disciplina: Manipulação e Análise de Dados Financeiros e Atuariais (MDAF)
 Grupo 3
 """
@@ -11,7 +11,6 @@ import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 import streamlit as st
 
 # ════════════════════════════════════════════════════════════════
@@ -26,7 +25,7 @@ st.set_page_config(
 )
 
 # ════════════════════════════════════════════════════════════════
-# CSS CUSTOMIZADO
+# CSS CUSTOMIZADO — PALETA CLARA E LEGÍVEL
 # ════════════════════════════════════════════════════════════════
 
 st.markdown("""
@@ -39,11 +38,11 @@ st.markdown("""
 
     /* Header */
     .main-header {
-        background: linear-gradient(135deg, #0D47A1 0%, #1565C0 50%, #42A5F5 100%);
+        background: linear-gradient(135deg, #1565C0 0%, #1E88E5 50%, #42A5F5 100%);
         padding: 2rem 2.5rem;
         border-radius: 16px;
         margin-bottom: 1.5rem;
-        box-shadow: 0 8px 32px rgba(13, 71, 161, 0.3);
+        box-shadow: 0 8px 32px rgba(21, 101, 192, 0.25);
     }
     .main-header h1 {
         color: #FFFFFF;
@@ -53,69 +52,67 @@ st.markdown("""
         letter-spacing: -0.02em;
     }
     .main-header p {
-        color: rgba(255,255,255,0.85);
+        color: rgba(255,255,255,0.9);
         font-size: 0.95rem;
         margin: 0.5rem 0 0 0;
     }
 
     /* KPI Cards */
     .kpi-card {
-        background: linear-gradient(135deg, #1A1F2E 0%, #1E2538 100%);
-        border: 1px solid rgba(79, 195, 247, 0.15);
+        background: linear-gradient(135deg, #1A1F2E 0%, #212840 100%);
+        border: 1px solid rgba(100, 181, 246, 0.2);
         border-radius: 14px;
         padding: 1.5rem;
         text-align: center;
         transition: all 0.3s ease;
-        box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
     }
     .kpi-card:hover {
-        border-color: rgba(79, 195, 247, 0.4);
+        border-color: rgba(100, 181, 246, 0.5);
         transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.25);
     }
     .kpi-value {
         font-size: 2rem;
         font-weight: 700;
-        color: #4FC3F7;
+        color: #64B5F6;
         margin: 0.5rem 0;
         letter-spacing: -0.02em;
     }
     .kpi-label {
         font-size: 0.8rem;
-        color: rgba(250,250,250,0.6);
+        color: rgba(255,255,255,0.75);
         text-transform: uppercase;
         letter-spacing: 0.08em;
-        font-weight: 500;
+        font-weight: 600;
     }
     .kpi-sub {
         font-size: 0.85rem;
-        color: rgba(250,250,250,0.45);
+        color: rgba(255,255,255,0.55);
         margin-top: 0.3rem;
     }
 
     /* Narrative blocks */
     .narrative-box {
-        background: linear-gradient(135deg, #1A1F2E 0%, #1E2538 100%);
-        border-left: 4px solid #4FC3F7;
+        background: linear-gradient(135deg, #1A2332 0%, #1E2A3A 100%);
+        border-left: 4px solid #42A5F5;
         border-radius: 0 12px 12px 0;
         padding: 1.2rem 1.5rem;
         margin: 1rem 0;
-        font-size: 0.9rem;
-        line-height: 1.7;
-        color: rgba(250,250,250,0.85);
+        font-size: 0.92rem;
+        line-height: 1.75;
+        color: rgba(255,255,255,0.9);
+    }
+    .narrative-box strong {
+        color: #90CAF9;
     }
 
     /* Section dividers */
     .section-divider {
         border: none;
         height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(79,195,247,0.3), transparent);
+        background: linear-gradient(90deg, transparent, rgba(100,181,246,0.3), transparent);
         margin: 2rem 0;
-    }
-
-    /* Sidebar styling */
-    [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #0E1117 0%, #151A28 100%);
     }
 
     /* Tab styling */
@@ -154,7 +151,6 @@ def carregar_dados():
 
     conn.close()
 
-    # Converter coluna Data
     df_mensal["Data"] = pd.to_datetime(df_mensal["Data"], errors="coerce")
     df_outliers["Data"] = pd.to_datetime(df_outliers["Data"], errors="coerce")
 
@@ -162,6 +158,24 @@ def carregar_dados():
 
 
 df_mensal, df_resumo_uf, df_outliers, df_resumo_outliers, df_anual = carregar_dados()
+
+# ════════════════════════════════════════════════════════════════
+# PALETA DE CORES PARA GRÁFICOS
+# ════════════════════════════════════════════════════════════════
+
+CHART_LAYOUT = dict(
+    plot_bgcolor="rgba(0,0,0,0)",
+    paper_bgcolor="rgba(0,0,0,0)",
+    font=dict(color="#E0E0E0", size=13),
+    xaxis=dict(gridcolor="rgba(255,255,255,0.08)", title_font=dict(size=13)),
+    yaxis=dict(gridcolor="rgba(255,255,255,0.08)", title_font=dict(size=13)),
+)
+
+COR_AZUL = "#42A5F5"         # principal
+COR_VERMELHO = "#FF7043"     # alerta (mais quente e legível)
+COR_VERDE = "#66BB6A"        # positivo
+COR_AMARELO = "#FFA726"      # intermediário
+COR_AZUL_CLARO = "#90CAF9"   # preenchimento
 
 # ════════════════════════════════════════════════════════════════
 # SIDEBAR — FILTROS GLOBAIS
@@ -190,9 +204,9 @@ with st.sidebar:
     st.markdown("---")
     st.markdown(
         """
-        <div style='text-align:center; opacity:0.5; font-size:0.75rem;'>
+        <div style='text-align:center; opacity:0.6; font-size:0.75rem;'>
             <p><strong>MDAF — Grupo 3</strong></p>
-            <p>Fase 5 — Dashboard Interativo</p>
+            <p>Fase 6 — Dashboard Interativo</p>
             <p>Dados: SUSEP (Prêmios e Sinistros)</p>
         </div>
         """,
@@ -250,6 +264,20 @@ with tab1:
     if df_filtrado.empty:
         st.warning("Nenhum dado encontrado para os filtros selecionados.")
     else:
+        # Introdução
+        st.markdown(
+            """
+            <div class="narrative-box">
+            <strong>📌 Sobre esta seção:</strong> A Visão Geral apresenta os indicadores-chave de
+            desempenho (KPIs) do mercado segurador brasileiro com base nos dados da SUSEP. A
+            <em>sinistralidade</em> — razão entre sinistros pagos e prêmios arrecadados — é o principal
+            indicador de desempenho técnico utilizado no setor. Valores acima de 100% indicam prejuízo
+            operacional. Os filtros na barra lateral permitem selecionar UFs e períodos específicos.
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
         # KPIs
         sinistralidade_media = df_filtrado["Sinistralidade"].mean()
         premio_total = df_filtrado["Prêmio Direto (R$)"].sum()
@@ -320,9 +348,10 @@ with tab1:
         with col_a:
             st.markdown(
                 f"""
-                <div class="kpi-card" style="border-left: 4px solid #EF5350;">
+                <div class="kpi-card" style="border-left: 4px solid {COR_VERMELHO};">
                     <div class="kpi-label">🔴 Maior Sinistralidade Média</div>
-                    <div class="kpi-value">{uf_maior['UF']} — {uf_maior['Sinistralidade']:.2%}</div>
+                    <div class="kpi-value" style="color:{COR_VERMELHO};">{uf_maior['UF']} — {uf_maior['Sinistralidade']:.2%}</div>
+                    <div class="kpi-sub">Estado com maior razão sinistro/prêmio no período</div>
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -330,9 +359,10 @@ with tab1:
         with col_b:
             st.markdown(
                 f"""
-                <div class="kpi-card" style="border-left: 4px solid #66BB6A;">
+                <div class="kpi-card" style="border-left: 4px solid {COR_VERDE};">
                     <div class="kpi-label">🟢 Menor Sinistralidade Média</div>
-                    <div class="kpi-value">{uf_menor['UF']} — {uf_menor['Sinistralidade']:.2%}</div>
+                    <div class="kpi-value" style="color:{COR_VERDE};">{uf_menor['UF']} — {uf_menor['Sinistralidade']:.2%}</div>
+                    <div class="kpi-sub">Estado com melhor equilíbrio atuarial no período</div>
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -344,7 +374,7 @@ with tab1:
         st.subheader("Ranking de Sinistralidade Média por UF")
 
         cores = [
-            "#EF5350" if v > 1 else "#FFA726" if v > 0.7 else "#66BB6A"
+            COR_VERMELHO if v > 1 else COR_AMARELO if v > 0.7 else COR_VERDE
             for v in ranking["Sinistralidade"]
         ]
 
@@ -356,39 +386,42 @@ with tab1:
                 marker_color=cores,
                 text=[f"{v:.1%}" for v in ranking["Sinistralidade"]],
                 textposition="outside",
-                textfont=dict(size=11),
+                textfont=dict(size=12, color="#E0E0E0"),
             )
         )
         fig_ranking.add_vline(
             x=1.0,
             line_dash="dash",
-            line_color="#EF5350",
+            line_color=COR_VERMELHO,
             annotation_text="100% (equilíbrio)",
             annotation_position="top",
+            annotation_font=dict(color="#E0E0E0", size=12),
         )
         fig_ranking.update_layout(
             yaxis=dict(autorange="reversed"),
-            height=max(500, len(ranking) * 22),
-            margin=dict(l=10, r=60, t=20, b=20),
-            plot_bgcolor="rgba(0,0,0,0)",
-            paper_bgcolor="rgba(0,0,0,0)",
-            font=dict(color="#FAFAFA"),
-            xaxis=dict(
-                title="Sinistralidade Média",
-                gridcolor="rgba(255,255,255,0.05)",
-            ),
+            height=max(550, len(ranking) * 24),
+            margin=dict(l=10, r=80, t=20, b=20),
+            xaxis=dict(title="Sinistralidade Média"),
             yaxis_title=None,
+            **CHART_LAYOUT,
         )
         st.plotly_chart(fig_ranking, use_container_width=True)
 
         st.markdown(
-            """
+            f"""
             <div class="narrative-box">
-            <strong>📌 Contexto Atuarial:</strong> A sinistralidade (razão sinistro/prêmio) é o principal indicador
-            de desempenho técnico do mercado segurador. Valores acima de 100% indicam que os sinistros pagos
-            superam os prêmios arrecadados, sinalizando <strong>desequilíbrio atuarial</strong> e potencial
-            necessidade de reprecificação de riscos. UFs com sinistralidade persistentemente alta podem refletir
-            concentração de riscos, preços inadequados ou eventos catastróficos.
+            <strong>📌 Interpretação do Ranking:</strong> O gráfico acima ordena as {len(ranking)} UFs pela
+            sinistralidade média no período de {ano_min} a {ano_max}. As barras em
+            <span style="color:{COR_VERMELHO};font-weight:600;">laranja-avermelhado</span> indicam UFs com
+            sinistralidade acima de 100%, ou seja, estados onde os sinistros pagos superaram os prêmios
+            arrecadados — configurando <strong>desequilíbrio atuarial</strong>. Barras em
+            <span style="color:{COR_AMARELO};font-weight:600;">amarelo</span> representam sinistralidade
+            entre 70% e 100% (zona de atenção), e barras em
+            <span style="color:{COR_VERDE};font-weight:600;">verde</span> indicam sinistralidade abaixo
+            de 70% (mercado mais estável). A linha tracejada marca o ponto de equilíbrio (100%), onde
+            prêmios e sinistros se igualam. Do ponto de vista da gestão atuarial, UFs com sinistralidade
+            persistentemente alta sinalizam necessidade de <strong>reprecificação</strong>,
+            <strong>adequação de reservas técnicas</strong> e investigação de fatores de risco regionais.
             </div>
             """,
             unsafe_allow_html=True,
@@ -401,6 +434,18 @@ with tab2:
     if df_filtrado.empty:
         st.warning("Nenhum dado encontrado para os filtros selecionados.")
     else:
+        st.markdown(
+            """
+            <div class="narrative-box">
+            <strong>📌 Sobre esta seção:</strong> A análise temporal permite acompanhar a evolução
+            da sinistralidade ao longo do tempo, identificando tendências, sazonalidades e eventos
+            atípicos. A série mensal agregada do Brasil oferece uma visão macro do comportamento do
+            mercado segurador, enquanto a comparação entre UFs revela dinâmicas regionais distintas.
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
         st.subheader("Sinistralidade Mensal Média — Brasil")
 
         serie_brasil = (
@@ -416,43 +461,46 @@ with tab2:
                 y=serie_brasil["Sinistralidade"],
                 mode="lines",
                 name="Sinistralidade Média",
-                line=dict(color="#4FC3F7", width=2.5),
+                line=dict(color=COR_AZUL, width=2.5),
                 fill="tozeroy",
-                fillcolor="rgba(79,195,247,0.08)",
+                fillcolor="rgba(66,165,245,0.1)",
                 hovertemplate="<b>%{x|%b %Y}</b><br>Sinistralidade: %{y:.2%}<extra></extra>",
             )
         )
         fig_serie.add_hline(
             y=1.0,
             line_dash="dash",
-            line_color="#EF5350",
+            line_color=COR_VERMELHO,
             annotation_text="100% — Ponto de equilíbrio",
             annotation_position="top left",
+            annotation_font=dict(color="#E0E0E0", size=12),
         )
         fig_serie.update_layout(
             height=420,
             margin=dict(l=10, r=10, t=30, b=10),
-            plot_bgcolor="rgba(0,0,0,0)",
-            paper_bgcolor="rgba(0,0,0,0)",
-            font=dict(color="#FAFAFA"),
-            xaxis=dict(title="Data", gridcolor="rgba(255,255,255,0.05)"),
-            yaxis=dict(
-                title="Sinistralidade",
-                tickformat=".0%",
-                gridcolor="rgba(255,255,255,0.05)",
-            ),
+            xaxis=dict(title="Data"),
+            yaxis=dict(title="Sinistralidade", tickformat=".0%"),
             showlegend=False,
+            **CHART_LAYOUT,
         )
         st.plotly_chart(fig_serie, use_container_width=True)
 
+        # Estatísticas complementares da série
+        media_periodo = serie_brasil["Sinistralidade"].mean()
+        meses_acima = (serie_brasil["Sinistralidade"] > 1.0).sum()
+        total_meses = len(serie_brasil)
+
         st.markdown(
-            """
+            f"""
             <div class="narrative-box">
-            <strong>📌 Interpretação:</strong> A série temporal do Brasil revela a dinâmica agregada da sinistralidade
-            ao longo do tempo. Picos acima de 100% indicam períodos em que o mercado esteve deficitário.
-            Oscilações sazonais podem refletir concentração de sinistros em determinados meses (ex.: aumento
-            de acidentes de trânsito ou eventos climáticos). A tendência de longo prazo é crucial para
-            a <strong>precificação atuarial</strong> e o <strong>dimensionamento de reservas técnicas</strong>.
+            <strong>📌 Interpretação da Série Temporal:</strong> No período analisado ({ano_min}–{ano_max}),
+            a sinistralidade mensal média do Brasil foi de <strong>{media_periodo:.2%}</strong>.
+            Dos {total_meses} meses observados, <strong>{meses_acima} meses</strong> apresentaram sinistralidade
+            acima de 100%, indicando desequilíbrio técnico. Picos na série podem estar relacionados a
+            eventos climáticos extremos, sazonalidade de sinistros (ex.: períodos chuvosos aumentam acidentes
+            de trânsito), ou choques econômicos que afetam a frequência e severidade dos sinistros. Para o
+            atuário, compreender esses padrões é fundamental para o <strong>dimensionamento de reservas técnicas</strong>,
+            a <strong>precificação prospectiva</strong> e a <strong>gestão de solvência</strong> das seguradoras.
             </div>
             """,
             unsafe_allow_html=True,
@@ -461,7 +509,7 @@ with tab2:
         st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
 
         # Série por UF individual
-        st.subheader("Sinistralidade Mensal por UF")
+        st.subheader("Comparação da Sinistralidade Mensal por UF")
 
         ufs_para_comparar = st.multiselect(
             "Selecione UFs para comparar:",
@@ -480,28 +528,39 @@ with tab2:
                 color="UF",
                 labels={"Sinistralidade": "Sinistralidade", "Data": "Data"},
                 hover_data={"Sinistralidade": ":.2%"},
+                color_discrete_sequence=px.colors.qualitative.Set2,
             )
             fig_uf.add_hline(
                 y=1.0,
                 line_dash="dash",
-                line_color="#EF5350",
+                line_color=COR_VERMELHO,
                 annotation_text="100%",
+                annotation_font=dict(color="#E0E0E0"),
             )
             fig_uf.update_layout(
                 height=450,
                 margin=dict(l=10, r=10, t=30, b=10),
-                plot_bgcolor="rgba(0,0,0,0)",
-                paper_bgcolor="rgba(0,0,0,0)",
-                font=dict(color="#FAFAFA"),
-                xaxis=dict(gridcolor="rgba(255,255,255,0.05)"),
-                yaxis=dict(
-                    tickformat=".0%", gridcolor="rgba(255,255,255,0.05)"
-                ),
+                yaxis=dict(tickformat=".0%"),
                 legend=dict(
-                    orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1
+                    orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1,
+                    font=dict(size=12),
                 ),
+                **CHART_LAYOUT,
             )
             st.plotly_chart(fig_uf, use_container_width=True)
+
+            st.markdown(
+                """
+                <div class="narrative-box">
+                <strong>📌 Comparativo Regional:</strong> Este gráfico permite identificar diferenças
+                no comportamento temporal da sinistralidade entre estados. UFs com trajetórias mais voláteis
+                possuem maior incerteza atuarial, enquanto UFs com séries mais suaves oferecem maior
+                previsibilidade para a projeção de reservas. Convergências ou divergências entre curvas
+                podem indicar fatores regulatórios ou econômicos comuns vs. especificidades regionais.
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
 # ────────────────────────────────────────────────────────────────
 # TAB 3 — ANÁLISE POR UF
@@ -510,6 +569,18 @@ with tab3:
     if df_filtrado.empty:
         st.warning("Nenhum dado encontrado para os filtros selecionados.")
     else:
+        st.markdown(
+            """
+            <div class="narrative-box">
+            <strong>📌 Sobre esta seção:</strong> Esta aba apresenta o perfil estatístico detalhado de cada
+            UF: medidas de tendência central (média, mediana), dispersão (desvio padrão, IQR, coeficiente
+            de variação) e limites para detecção de outliers. A análise por UF é fundamental para a
+            segmentação de risco, permitindo ao atuário identificar mercados homogêneos vs. heterogêneos.
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
         # Estatísticas descritivas
         st.subheader("Estatísticas Descritivas por UF")
 
@@ -518,16 +589,10 @@ with tab3:
             "Sinistralidade_Media", ascending=False
         )
 
-        # Formatação para exibição
         cols_pct = [
-            "Sinistralidade_Media",
-            "Sinistralidade_Mediana",
-            "Sinistralidade_Min",
-            "Sinistralidade_Max",
-            "Q1",
-            "Q3",
-            "Limite_Inferior",
-            "Limite_Superior",
+            "Sinistralidade_Media", "Sinistralidade_Mediana",
+            "Sinistralidade_Min", "Sinistralidade_Max",
+            "Q1", "Q3", "Limite_Inferior", "Limite_Superior",
         ]
         cols_dec = ["Desvio_Padrao", "IQR", "CV"]
 
@@ -541,6 +606,20 @@ with tab3:
 
         st.dataframe(resumo_fmt, use_container_width=True, hide_index=True)
 
+        st.markdown(
+            """
+            <div class="narrative-box">
+            <strong>📌 Como ler esta tabela:</strong>
+            • <strong>Sinistralidade Média/Mediana:</strong> Indicam o nível típico de sinistralidade. Grandes diferenças
+            entre média e mediana sugerem assimetria (influência de valores extremos).<br>
+            • <strong>Desvio Padrão e CV:</strong> Medem a variabilidade. Um CV alto (> 0.5) indica risco heterogêneo, mais difícil de precificar.<br>
+            • <strong>Q1, Q3, IQR:</strong> Quartis e amplitude interquartil — base para detecção de outliers pelo método IQR.<br>
+            • <strong>Limites Inf./Sup.:</strong> Q1 - 1.5×IQR e Q3 + 1.5×IQR. Valores fora desses limites são considerados outliers.
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
         st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
 
         # Boxplot
@@ -552,27 +631,32 @@ with tab3:
             y="Sinistralidade",
             color="UF",
             labels={"Sinistralidade": "Sinistralidade", "UF": "UF"},
+            color_discrete_sequence=px.colors.qualitative.Set3,
         )
-        fig_box.add_hline(y=1.0, line_dash="dash", line_color="#EF5350")
+        fig_box.add_hline(y=1.0, line_dash="dash", line_color=COR_VERMELHO)
         fig_box.update_layout(
-            height=500,
+            height=520,
             margin=dict(l=10, r=10, t=30, b=10),
-            plot_bgcolor="rgba(0,0,0,0)",
-            paper_bgcolor="rgba(0,0,0,0)",
-            font=dict(color="#FAFAFA"),
             showlegend=False,
-            xaxis=dict(
-                title="UF",
-                categoryorder="total descending",
-                gridcolor="rgba(255,255,255,0.05)",
-            ),
-            yaxis=dict(
-                title="Sinistralidade",
-                tickformat=".0%",
-                gridcolor="rgba(255,255,255,0.05)",
-            ),
+            xaxis=dict(title="UF", categoryorder="total descending"),
+            yaxis=dict(title="Sinistralidade", tickformat=".0%"),
+            **CHART_LAYOUT,
         )
         st.plotly_chart(fig_box, use_container_width=True)
+
+        st.markdown(
+            """
+            <div class="narrative-box">
+            <strong>📌 Interpretação do Boxplot:</strong> Cada caixa representa a faixa interquartil (Q1–Q3)
+            da sinistralidade mensal de cada UF. A linha central é a mediana. Os "bigodes" se estendem
+            até 1,5×IQR e os pontos além são outliers. UFs com caixas mais largas possuem maior dispersão
+            (risco heterogêneo). Caixas posicionadas acima da linha de 100% indicam UFs com desequilíbrio.
+            UFs com muitos pontos acima dos bigodes são propensas a eventos extremos — um elemento crucial
+            para o <strong>carregamento de segurança nas tarifas</strong> e <strong>constituição de reservas</strong>.
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
         st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
 
@@ -587,23 +671,20 @@ with tab3:
                 x="Prêmio Direto (R$)",
                 y="Sinistro Direto (R$)",
                 color="UF",
-                opacity=0.6,
+                opacity=0.55,
                 hover_data={"Sinistralidade": ":.2%"},
                 trendline="ols",
                 labels={
                     "Prêmio Direto (R$)": "Prêmio Direto (R$)",
                     "Sinistro Direto (R$)": "Sinistro Direto (R$)",
                 },
+                color_discrete_sequence=px.colors.qualitative.Set2,
             )
             fig_scatter.update_layout(
-                height=450,
+                height=480,
                 margin=dict(l=10, r=10, t=30, b=10),
-                plot_bgcolor="rgba(0,0,0,0)",
-                paper_bgcolor="rgba(0,0,0,0)",
-                font=dict(color="#FAFAFA"),
                 showlegend=False,
-                xaxis=dict(gridcolor="rgba(255,255,255,0.05)"),
-                yaxis=dict(gridcolor="rgba(255,255,255,0.05)"),
+                **CHART_LAYOUT,
             )
             st.plotly_chart(fig_scatter, use_container_width=True)
 
@@ -620,25 +701,31 @@ with tab3:
                 labels=dict(color="Correlação"),
                 aspect="equal",
             )
+            fig_corr.update_traces(textfont=dict(size=14, color="white"))
             fig_corr.update_layout(
-                height=450,
+                height=480,
                 margin=dict(l=10, r=10, t=30, b=10),
-                plot_bgcolor="rgba(0,0,0,0)",
-                paper_bgcolor="rgba(0,0,0,0)",
-                font=dict(color="#FAFAFA"),
+                **CHART_LAYOUT,
             )
             st.plotly_chart(fig_corr, use_container_width=True)
 
+        corr_premio_sinistro = corr_matrix.loc["Prêmio Direto (R$)", "Sinistro Direto (R$)"]
+        corr_premio_ratio = corr_matrix.loc["Prêmio Direto (R$)", "Sinistralidade"]
+
         st.markdown(
-            """
+            f"""
             <div class="narrative-box">
-            <strong>📌 Análise Estatística:</strong> O boxplot evidencia a dispersão e assimetria da
-            sinistralidade por UF, permitindo identificar estados com alta variabilidade de risco.
-            A correlação de Spearman entre prêmio e sinistro deve ser alta (próxima de 1), pois mercados
-            maiores naturalmente geram mais sinistros. Porém, a correlação com a sinistralidade (razão)
-            pode revelar se mercados maiores são mais ou menos eficientes na gestão de risco.
-            O coeficiente de variação (CV) é um indicador útil de <strong>homogeneidade do risco</strong>
-            dentro de cada UF.
+            <strong>📌 Análise da Dispersão e Correlação:</strong><br>
+            • <strong>Gráfico de Dispersão:</strong> Cada ponto representa uma observação mensal (UF × mês).
+            Pontos acima da linha de tendência linear possuem sinistros proporcionalmente maiores que o esperado.
+            A reta de regressão OLS indica a relação média — sua inclinação reflete o percentual médio de sinistro
+            por real de prêmio.<br><br>
+            • <strong>Matriz de Correlação (Spearman):</strong> A correlação entre Prêmio e Sinistro é de
+            <strong>{corr_premio_sinistro:.3f}</strong>, confirmando que mercados maiores geram mais sinistros
+            (relação esperada). Já a correlação entre Prêmio e Sinistralidade (razão) é de
+            <strong>{corr_premio_ratio:.3f}</strong> — valores próximos de zero sugerem que o tamanho do mercado
+            <em>não determina</em> a eficiência na gestão de risco. Escolhemos Spearman (ao invés de Pearson)
+            por ser mais robusta a outliers e relações não-lineares.
             </div>
             """,
             unsafe_allow_html=True,
@@ -651,12 +738,32 @@ with tab4:
     if df_outliers_filtrado.empty:
         st.info("Nenhum outlier encontrado para os filtros selecionados.")
     else:
+        st.markdown(
+            """
+            <div class="narrative-box">
+            <strong>📌 Sobre esta seção:</strong> Outliers são observações que se desviam significativamente
+            do comportamento esperado. Neste projeto, utilizamos o <strong>método IQR</strong> (amplitude
+            interquartil) para detectá-los: valores acima de Q3 + 1.5×IQR são classificados como outliers
+            superiores e abaixo de Q1 − 1.5×IQR como inferiores. A identificação de outliers é essencial
+            na modelagem atuarial, pois eventos extremos impactam diretamente as reservas técnicas.
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
         st.subheader("Outliers Identificados — Método IQR")
 
         # Contagem por UF
         resumo_o = df_resumo_outliers[
             df_resumo_outliers["UF"].isin(ufs_selecionadas)
         ].copy()
+
+        n_sup = len(
+            df_outliers_filtrado[df_outliers_filtrado["Tipo_Outlier"] == "Superior"]
+        )
+        n_inf = len(
+            df_outliers_filtrado[df_outliers_filtrado["Tipo_Outlier"] == "Inferior"]
+        )
 
         col_o1, col_o2, col_o3 = st.columns(3)
         with col_o1:
@@ -665,32 +772,29 @@ with tab4:
                 <div class="kpi-card">
                     <div class="kpi-label">Total de Outliers</div>
                     <div class="kpi-value">{len(df_outliers_filtrado)}</div>
+                    <div class="kpi-sub">{len(df_outliers_filtrado)/len(df_filtrado)*100:.1f}% dos registros</div>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
         with col_o2:
-            n_sup = len(
-                df_outliers_filtrado[df_outliers_filtrado["Tipo_Outlier"] == "Superior"]
-            )
             st.markdown(
                 f"""
-                <div class="kpi-card" style="border-left: 4px solid #EF5350;">
+                <div class="kpi-card" style="border-left: 4px solid {COR_VERMELHO};">
                     <div class="kpi-label">Outliers Superiores</div>
-                    <div class="kpi-value" style="color:#EF5350;">{n_sup}</div>
+                    <div class="kpi-value" style="color:{COR_VERMELHO};">{n_sup}</div>
+                    <div class="kpi-sub">Sinistralidade acima do esperado</div>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
         with col_o3:
-            n_inf = len(
-                df_outliers_filtrado[df_outliers_filtrado["Tipo_Outlier"] == "Inferior"]
-            )
             st.markdown(
                 f"""
-                <div class="kpi-card" style="border-left: 4px solid #66BB6A;">
+                <div class="kpi-card" style="border-left: 4px solid {COR_VERDE};">
                     <div class="kpi-label">Outliers Inferiores</div>
-                    <div class="kpi-value" style="color:#66BB6A;">{n_inf}</div>
+                    <div class="kpi-value" style="color:{COR_VERDE};">{n_inf}</div>
+                    <div class="kpi-sub">Sinistralidade abaixo do esperado</div>
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -699,7 +803,7 @@ with tab4:
         st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
 
         # Gráfico de outliers por UF
-        st.subheader("Outliers por UF")
+        st.subheader("Distribuição de Outliers por UF")
 
         outlier_count = (
             df_outliers_filtrado.groupby(["UF", "Tipo_Outlier"])
@@ -707,7 +811,7 @@ with tab4:
             .reset_index(name="Quantidade")
         )
 
-        color_map = {"Superior": "#EF5350", "Inferior": "#66BB6A"}
+        color_map = {"Superior": COR_VERMELHO, "Inferior": COR_VERDE}
 
         fig_outliers = px.bar(
             outlier_count,
@@ -719,22 +823,39 @@ with tab4:
             labels={"Quantidade": "Nº de Outliers", "Tipo_Outlier": "Tipo"},
         )
         fig_outliers.update_layout(
-            height=420,
+            height=440,
             margin=dict(l=10, r=10, t=30, b=10),
-            plot_bgcolor="rgba(0,0,0,0)",
-            paper_bgcolor="rgba(0,0,0,0)",
-            font=dict(color="#FAFAFA"),
-            xaxis=dict(
-                title="UF",
-                categoryorder="total descending",
-                gridcolor="rgba(255,255,255,0.05)",
-            ),
-            yaxis=dict(title="Quantidade", gridcolor="rgba(255,255,255,0.05)"),
+            xaxis=dict(title="UF", categoryorder="total descending"),
+            yaxis=dict(title="Quantidade"),
             legend=dict(
-                orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1
+                orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1,
+                font=dict(size=12),
             ),
+            **CHART_LAYOUT,
         )
         st.plotly_chart(fig_outliers, use_container_width=True)
+
+        # UF com mais outliers
+        uf_mais_outliers = outlier_count.groupby("UF")["Quantidade"].sum().idxmax()
+        qtd_mais = outlier_count.groupby("UF")["Quantidade"].sum().max()
+
+        st.markdown(
+            f"""
+            <div class="narrative-box">
+            <strong>📌 Interpretação dos Outliers por UF:</strong> A UF com maior número de outliers é
+            <strong>{uf_mais_outliers}</strong> ({qtd_mais} ocorrências), indicando que este estado apresenta
+            maior frequência de meses com comportamento atípico. Outliers superiores (barras em
+            <span style="color:{COR_VERMELHO};font-weight:600;">laranja</span>) são os mais preocupantes
+            do ponto de vista atuarial, pois representam meses em que a sinistralidade excedeu
+            significativamente o padrão — podendo indicar fraudes, eventos catastróficos ou concentração
+            de sinistros de grande severidade. Os outliers inferiores (barras em
+            <span style="color:{COR_VERDE};font-weight:600;">verde</span>) indicam meses onde houve
+            menos sinistralidade do que o esperado, o que pode ser positivo, mas também deve ser
+            investigado para assegurar que não reflitam sub-registro de sinistros.
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
         st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
 
@@ -753,13 +874,9 @@ with tab4:
 
         df_out_show_fmt = df_out_show[
             [
-                "UF",
-                "Competência",
-                "Prêmio Direto (R$)",
-                "Sinistro Direto (R$)",
-                "Sinistralidade",
-                "Tipo_Outlier",
-                "Desvio_Limite",
+                "UF", "Competência",
+                "Prêmio Direto (R$)", "Sinistro Direto (R$)",
+                "Sinistralidade", "Tipo_Outlier", "Desvio_Limite",
             ]
         ].copy()
         df_out_show_fmt["Sinistralidade"] = df_out_show_fmt["Sinistralidade"].apply(
@@ -774,13 +891,12 @@ with tab4:
         st.markdown(
             """
             <div class="narrative-box">
-            <strong>📌 Relevância Atuarial dos Outliers:</strong> Outliers superiores (sinistralidade muito acima
-            do esperado) podem indicar eventos extremos, fraudes ou concentração de grandes sinistros.
-            Outliers inferiores podem sugerir períodos atípicos de baixa sinistralidade. A identificação
-            e tratamento de outliers é fundamental na <strong>modelagem de risco</strong>, pois eventos
-            extremos impactam diretamente as <strong>reservas técnicas</strong> e a
-            <strong>solvência das seguradoras</strong>. O método IQR (amplitude interquartil) é robusto
-            e amplamente utilizado em análises exploratórias.
+            <strong>📌 Leitura da tabela:</strong> A coluna <em>Desvio_Limite</em> mostra o quanto cada
+            observação se afasta do limite IQR. Quanto maior o desvio, mais extremo é o evento. Na
+            prática atuarial, esses registros são candidatos a tratamento especial: podem ser excluídos
+            da base de precificação (se forem eventos não-recorrentes) ou modelados separadamente
+            (se forem riscos catastróficos que exigem provisão específica). A decisão depende da
+            natureza do outlier e do contexto de cada UF.
             </div>
             """,
             unsafe_allow_html=True,
@@ -793,6 +909,18 @@ with tab5:
     if df_anual_filtrado.empty:
         st.warning("Nenhum dado encontrado para os filtros selecionados.")
     else:
+        st.markdown(
+            """
+            <div class="narrative-box">
+            <strong>📌 Sobre esta seção:</strong> A visão anual agrega os dados mensais em base anual,
+            suavizando oscilações de curto prazo e revelando tendências estruturais do mercado segurador.
+            Essa perspectiva é fundamental para a projeção de reservas, adequação de prêmios futuros e
+            avaliação da sustentabilidade financeira do setor em cada UF.
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+
         st.subheader("Sinistralidade Anual Média — Brasil")
 
         anual_media = (
@@ -808,36 +936,48 @@ with tab5:
                 y=anual_media["Sinistralidade_Anual"],
                 mode="lines+markers",
                 name="Sinistralidade Anual Média",
-                line=dict(color="#4FC3F7", width=3),
-                marker=dict(size=10, color="#4FC3F7", line=dict(width=2, color="#0D47A1")),
+                line=dict(color=COR_AZUL, width=3),
+                marker=dict(size=10, color=COR_AZUL, line=dict(width=2, color="#1565C0")),
                 hovertemplate="<b>%{x}</b><br>Sinistralidade: %{y:.2%}<extra></extra>",
             )
         )
         fig_anual.add_hline(
             y=1.0,
             line_dash="dash",
-            line_color="#EF5350",
+            line_color=COR_VERMELHO,
             annotation_text="100%",
+            annotation_font=dict(color="#E0E0E0", size=12),
         )
         fig_anual.update_layout(
             height=420,
             margin=dict(l=10, r=10, t=30, b=10),
-            plot_bgcolor="rgba(0,0,0,0)",
-            paper_bgcolor="rgba(0,0,0,0)",
-            font=dict(color="#FAFAFA"),
-            xaxis=dict(
-                title="Ano",
-                dtick=1,
-                gridcolor="rgba(255,255,255,0.05)",
-            ),
-            yaxis=dict(
-                title="Sinistralidade Anual",
-                tickformat=".0%",
-                gridcolor="rgba(255,255,255,0.05)",
-            ),
+            xaxis=dict(title="Ano", dtick=1),
+            yaxis=dict(title="Sinistralidade Anual", tickformat=".0%"),
             showlegend=False,
+            **CHART_LAYOUT,
         )
         st.plotly_chart(fig_anual, use_container_width=True)
+
+        # Tendência
+        melhor_ano = anual_media.loc[anual_media["Sinistralidade_Anual"].idxmin()]
+        pior_ano = anual_media.loc[anual_media["Sinistralidade_Anual"].idxmax()]
+
+        st.markdown(
+            f"""
+            <div class="narrative-box">
+            <strong>📌 Interpretação da Evolução Anual:</strong> O gráfico mostra a média da sinistralidade
+            anual agregada das UFs selecionadas. O <strong>melhor ano</strong> foi
+            <strong>{int(melhor_ano['Ano'])}</strong> (sinistralidade de {melhor_ano['Sinistralidade_Anual']:.2%}),
+            enquanto o <strong>pior ano</strong> foi <strong>{int(pior_ano['Ano'])}</strong>
+            ({pior_ano['Sinistralidade_Anual']:.2%}). Variações interanuais podem refletir: mudanças
+            regulatórias que alteraram a composição dos prêmios; eventos climáticos ou econômicos que
+            elevaram os sinistros; ou ajustes de precificação implementados pelas seguradoras. Para a
+            gestão atuarial, a tendência de longo prazo é mais relevante que oscilações pontuais, pois
+            permite antecipar necessidades de recapitalização e ajuste de produtos.
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
 
         st.markdown('<hr class="section-divider">', unsafe_allow_html=True)
 
@@ -857,7 +997,6 @@ with tab5:
             ].copy()
             df_anual_show = df_anual_show.sort_values(["UF", "Ano"])
 
-            # Formatação
             df_anual_fmt = df_anual_show.copy()
             df_anual_fmt["Premio_Total"] = df_anual_fmt["Premio_Total"].apply(
                 lambda x: f"R$ {x:,.2f}"
@@ -885,36 +1024,34 @@ with tab5:
                     "Ano": "Ano",
                 },
                 hover_data={"Sinistralidade_Anual": ":.2%"},
+                color_discrete_sequence=px.colors.qualitative.Set2,
             )
-            fig_anual_uf.add_hline(y=1.0, line_dash="dash", line_color="#EF5350")
+            fig_anual_uf.add_hline(y=1.0, line_dash="dash", line_color=COR_VERMELHO)
             fig_anual_uf.update_layout(
-                height=450,
+                height=460,
                 margin=dict(l=10, r=10, t=30, b=10),
-                plot_bgcolor="rgba(0,0,0,0)",
-                paper_bgcolor="rgba(0,0,0,0)",
-                font=dict(color="#FAFAFA"),
-                xaxis=dict(dtick=1, gridcolor="rgba(255,255,255,0.05)"),
-                yaxis=dict(
-                    tickformat=".0%", gridcolor="rgba(255,255,255,0.05)"
-                ),
+                xaxis=dict(dtick=1),
+                yaxis=dict(tickformat=".0%"),
                 legend=dict(
                     orientation="h",
-                    yanchor="bottom",
-                    y=1.02,
-                    xanchor="right",
-                    x=1,
+                    yanchor="bottom", y=1.02, xanchor="right", x=1,
+                    font=dict(size=12),
                 ),
+                **CHART_LAYOUT,
             )
             st.plotly_chart(fig_anual_uf, use_container_width=True)
 
         st.markdown(
             """
             <div class="narrative-box">
-            <strong>📌 Perspectiva de Longo Prazo:</strong> A análise anual permite observar tendências
-            estruturais do mercado segurador. Variações interanuais podem refletir mudanças regulatórias,
-            conjuntura econômica ou eventos atípicos. Para a <strong>gestão atuarial</strong>, a visão
-            anual é essencial na <strong>projeção de reservas</strong>, <strong>adequação de prêmios</strong>
-            e avaliação da <strong>sustentabilidade financeira</strong> do setor.
+            <strong>📌 Perspectiva de Longo Prazo:</strong> A análise anual por UF permite identificar
+            estados com trajetórias de melhoria (sinistralidade decrescente) vs. estados em deterioração.
+            Cruzando com a tabela detalhada dos valores absolutos de prêmios e sinistros, é possível
+            distinguir se mudanças na sinistralidade decorrem de aumento de sinistros ou de queda nos
+            prêmios — diagnósticos que levam a estratégias atuariais distintas. UFs com sinistralidade
+            anual sistematicamente acima de 100% podem estar em espiral negativa: prêmios aumentam
+            (para cobrir perdas), segurados migram, e o pool de risco se deteriora — um fenômeno
+            conhecido como <strong>seleção adversa</strong>.
             </div>
             """,
             unsafe_allow_html=True,
