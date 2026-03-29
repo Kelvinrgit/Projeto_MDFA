@@ -167,8 +167,6 @@ CHART_LAYOUT = dict(
     plot_bgcolor="rgba(0,0,0,0)",
     paper_bgcolor="rgba(0,0,0,0)",
     font=dict(color="#E0E0E0", size=13),
-    xaxis=dict(gridcolor="rgba(255,255,255,0.08)", title_font=dict(size=13)),
-    yaxis=dict(gridcolor="rgba(255,255,255,0.08)", title_font=dict(size=13)),
 )
 
 COR_AZUL = "#42A5F5"         # principal
